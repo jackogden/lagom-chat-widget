@@ -89,6 +89,7 @@
     '.fc.sent{opacity:.55;pointer-events:none}' +
     '.btn{background:' + OCRE + ';color:#fff;border:0;border-radius:10px;padding:0 14px;height:38px;font-weight:600;cursor:pointer;font-size:14px}' +
     '.btn:disabled{opacity:.5;cursor:default}' +
+    '@media(max-width:480px),(pointer:coarse){textarea,.fc input,.fc input[type=date]{font-size:16px}}' + // iOS Safari zooms the whole page when a field under 16px is focused: that pushed the chat off the right edge
     '@media(max-width:480px){.wrap{bottom:12px;right:12px}.wrap.left{left:12px}.panel{position:fixed;top:auto;left:10px;right:10px;bottom:10px;width:auto;max-width:none;height:min(540px,70vh);height:min(540px,70dvh);max-height:none;border-radius:14px}' +
     '.fab{width:56px;height:56px}}' +
     '@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}' +
