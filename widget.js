@@ -26,10 +26,10 @@
   ];
 
   // ---- state -----------------------------------------------------------------
-  var state = { sid: rand(), msgs: [], open: false };
+  var state = { sid: rand(), msgs: [], open: false, auth: null, pending: null };
   try {
     var saved = JSON.parse(sessionStorage.getItem(STORE) || "null");
-    if (saved && saved.sid && Array.isArray(saved.msgs)) state = { sid: saved.sid, msgs: saved.msgs.slice(-30), open: !!saved.open };
+    if (saved && saved.sid && Array.isArray(saved.msgs)) state = { sid: saved.sid, msgs: saved.msgs.slice(-30), open: !!saved.open, auth: typeof saved.auth === "string" ? saved.auth : null, pending: typeof saved.pending === "string" ? saved.pending : null };
   } catch (e) { /* storage blocked: run without persistence */ }
   function save() { try { sessionStorage.setItem(STORE, JSON.stringify(state)); } catch (e) {} }
   function rand() { return Math.random().toString(36).slice(2) + Date.now().toString(36); }
@@ -162,16 +162,20 @@
     return out.join("");
   }
   var FORM_TAG = /\n?\[\[FORM\]\]\s*/g, FORM_SENT = "[Contact form submitted]";
+  var VERIFY_TAG = /\n?\[\[VERIFY\]\]\s*/g, VERIFY_SENT = "[Verification form submitted]";
   function add(role, text, live) {
     var d = document.createElement("div");
     d.className = "m " + (role === "user" ? "me" : "bot");
-    var shown = String(text), wantsForm = false;
+    var shown = String(text), wantsForm = false, wantsVerify = false;
     if (role !== "user" && FORM_TAG.test(shown)) { wantsForm = true; shown = shown.replace(FORM_TAG, "").trim(); }
     FORM_TAG.lastIndex = 0;
+    if (role !== "user" && VERIFY_TAG.test(shown)) { wantsVerify = true; shown = shown.replace(VERIFY_TAG, "").trim(); }
+    VERIFY_TAG.lastIndex = 0;
+    if (role === "user" && shown === VERIFY_SENT) shown = "**My details for verification** (sent securely)";
     if (role === "user" && shown.indexOf(FORM_SENT) === 0) shown = "**My contact details**" + shown.slice(FORM_SENT.length);
     d.innerHTML = render(shown);
     log.appendChild(d);
-    if (wantsForm && live) contactForm(); else scroll();
+    if (wantsVerify && live) verifyForm(); else if (wantsForm && live) contactForm(); else scroll();
     return d;
   }
   // Contact form: any box may be left blank, but the team needs a phone number or an email to reply.
@@ -210,6 +214,61 @@
     log.scrollTop += c.getBoundingClientRect().top - log.getBoundingClientRect().top - 8;
     setTimeout(function () { log.style.scrollBehavior = ""; }, 400);
     setTimeout(function () { f.n.focus({ preventScroll: true }); }, 50);
+  }
+  // Verification form: posted straight to the clinic's system. The date of birth and number never go to the AI assistant.
+  function verifyForm() {
+    var old = log.querySelector(".formcard"); if (old) old.remove();
+    var c = document.createElement("div");
+    c.className = "m bot formcard";
+    var today = new Date().toISOString().slice(0, 10);
+    c.innerHTML =
+      '<form class="fc" novalidate>' +
+      '<label>First name<input name="f" type="text" autocomplete="given-name" maxlength="60"></label>' +
+      '<label>Surname<input name="l" type="text" autocomplete="family-name" maxlength="60"></label>' +
+      '<label>Date of birth<input name="d" type="date" autocomplete="bday" max="' + today + '" placeholder="DD/MM/YYYY"></label>' +
+      '<label>Telephone number on your record<input name="p" type="tel" autocomplete="tel" maxlength="30" inputmode="tel"></label>' +
+      '<div class="err" role="alert"></div>' +
+      '<button class="btn" type="submit">Find my appointment</button>' +
+      '<div class="hint">These details are only used to find your booking. They are checked by the clinic\u2019s booking system and are not shown to the AI assistant.</div>' +
+      '</form>';
+    log.appendChild(c);
+    var f = c.querySelector("form"), err = c.querySelector(".err");
+    f.addEventListener("submit", function (ev) {
+      ev.preventDefault();
+      if (busy) return;
+      var v = { first: f.f.value.trim(), last: f.l.value.trim(), dob: f.d.value.trim(), phone: f.p.value.trim() };
+      if (!v.first || !v.last || !v.dob || !v.phone) { err.textContent = "Please fill in every box."; return; }
+      if (v.phone.replace(/\D/g, "").length < 10) { err.textContent = "Please include the full telephone number with area code."; return; }
+      err.textContent = "";
+      c.remove();
+      verify(v);
+    });
+    log.style.scrollBehavior = "auto";
+    log.scrollTop += c.getBoundingClientRect().top - log.getBoundingClientRect().top - 8;
+    setTimeout(function () { log.style.scrollBehavior = ""; }, 400);
+    setTimeout(function () { f.f.focus({ preventScroll: true }); }, 50);
+  }
+  function verify(v) {
+    var c = $("chips"); if (c) c.remove();
+    state.msgs.push({ role: "user", content: VERIFY_SENT });
+    add("user", VERIFY_SENT);
+    save(); setBusy(true);
+    var typing = document.createElement("div");
+    typing.className = "m bot typing"; typing.innerHTML = "<i></i><i></i><i></i>";
+    log.appendChild(typing); scroll();
+    var ctl = new AbortController();
+    var timer = setTimeout(function () { ctl.abort(); }, 40000);
+    fetch(ENDPOINT, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "verify", sid: state.sid, first: v.first, last: v.last, dob: v.dob, phone: v.phone }), signal: ctl.signal
+    }).then(function (r) { return r.json().catch(function () { return {}; }); })
+      .then(function (b) {
+        state.auth = (b && typeof b.auth === "string") ? b.auth : null;
+        state.pending = null;
+        done(typing, b && b.reply, !!(b && b.retry));
+      })
+      .catch(function () { done(typing, null); })
+      .then(function () { clearTimeout(timer); });
   }
   function scroll() { log.scrollTop = log.scrollHeight; }
 
@@ -251,18 +310,19 @@
     var timer = setTimeout(function () { ctl.abort(); }, 60000);
     fetch(ENDPOINT, {
       method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ sid: state.sid, messages: state.msgs.slice(-14) }), signal: ctl.signal
+      body: JSON.stringify({ sid: state.sid, messages: state.msgs.slice(-14), auth: state.auth || undefined, pending: state.pending || undefined }), signal: ctl.signal
     }).then(function (r) { return r.json().catch(function () { return {}; }); })
-      .then(function (b) { done(typing, b && b.reply); })
+      .then(function (b) { state.pending = (b && typeof b.pending === "string") ? b.pending : null; done(typing, b && b.reply); })
       .catch(function () { done(typing, null); })
       .then(function () { clearTimeout(timer); });
   }
-  function done(typing, reply) {
+  function done(typing, reply, retry) {
     typing.remove();
     var text = reply || "Sorry, I couldn't connect just now. Please phone the clinic on " + PHONE + " or email info@thelagom.co.uk.";
     state.msgs.push({ role: "assistant", content: text });
     add("assistant", text, true);
     save(); setBusy(false);
+    if (retry) verifyForm();
     if (!log.querySelector(".formcard")) q.focus();
   }
   function setBusy(b) { busy = b; send.disabled = b; }
