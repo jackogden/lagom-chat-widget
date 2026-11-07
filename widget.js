@@ -65,7 +65,7 @@
     '.head .t{flex:1;min-width:0}.head .logo{display:block;height:45px;width:auto}' +
     '.head .s{font-size:11.5px;opacity:.85;margin-top:4px}' +
     '.x{background:rgba(255,255,255,.16);border:0;color:#fff;cursor:pointer;font-size:28px;line-height:1;width:44px;height:44px;min-width:44px;padding:0;border-radius:50%;display:flex;align-items:center;justify-content:center}.x:hover{background:rgba(255,255,255,.3)}' +
-    '.log{flex:1;overflow-y:auto;padding:14px;background:' + TITANIUM + ';display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}' +
+    '.log{flex:1;overflow-y:auto;overflow-x:hidden;padding:14px;background:' + TITANIUM + ';display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}' +
     '.m{max-width:88%;padding:10px 13px;border-radius:14px;font-size:14px;line-height:1.5;color:' + LAVENDER + ';word-wrap:break-word;overflow-wrap:anywhere}' +
     '.m.bot{background:#fff;border:1px solid ' + BORDER + ';border-bottom-left-radius:4px;align-self:flex-start}' +
     '.m.me{background:' + LAVENDER + ';color:#fff;border-bottom-right-radius:4px;align-self:flex-end}' +
