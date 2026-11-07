@@ -171,8 +171,7 @@
     if (role === "user" && shown.indexOf(FORM_SENT) === 0) shown = "**My contact details**" + shown.slice(FORM_SENT.length);
     d.innerHTML = render(shown);
     log.appendChild(d);
-    if (wantsForm && live) contactForm();
-    scroll();
+    if (wantsForm && live) contactForm(); else scroll();
     return d;
   }
   // Contact form: any box may be left blank, but the team needs a phone number or an email to reply.
