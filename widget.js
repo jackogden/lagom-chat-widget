@@ -10,6 +10,7 @@
   var ENDPOINT = ATTR("endpoint", "https://euguiuqdjtpwdztifrlc.supabase.co/functions/v1/chat");
   var POSITION = ATTR("position", "auto");
   var PHONE = "0117 987 2075";
+  var LOGO = ATTR("logo", (script && script.src ? script.src.replace(/[^\/]*$/, "") : "https://jackogden.github.io/lagom-chat-widget/") + "logo-reversed.png");
   var STORE = "lagomChat.v1";
   var MAX_LEN = 600;
 
@@ -37,7 +38,7 @@
   if (!document.querySelector('link[data-lagom-chat-font]')) {
     var l = document.createElement("link");
     l.rel = "stylesheet"; l.setAttribute("data-lagom-chat-font", "1");
-    l.href = "https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap";
+    l.href = "https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700&family=Raleway:wght@300;400;500;600;700&display=swap";
     document.head.appendChild(l);
   }
 
@@ -61,14 +62,14 @@
     'box-shadow:0 14px 44px rgba(0,0,0,.28);overflow:hidden;flex-direction:column;border:1px solid ' + BORDER + '}' +
     '.panel.open{display:flex}' +
     '.head{background:' + LAVENDER + ';color:#fff;padding:14px 16px;display:flex;align-items:center;gap:12px;border-bottom:3px solid ' + OCRE + '}' +
-    '.head .t{flex:1;min-width:0}.head .n{font-family:"Nanum Myeongjo",Georgia,serif;font-size:17px;letter-spacing:.2px}' +
-    '.head .s{font-size:11.5px;opacity:.85;margin-top:2px}' +
+    '.head .t{flex:1;min-width:0}.head .logo{display:block;height:45px;width:auto}' +
+    '.head .s{font-size:11.5px;opacity:.85;margin-top:4px}' +
     '.x{background:transparent;border:0;color:#fff;cursor:pointer;font-size:24px;line-height:1;padding:4px 8px;border-radius:6px}.x:hover{background:rgba(255,255,255,.14)}' +
     '.log{flex:1;overflow-y:auto;padding:14px;background:' + TITANIUM + ';display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}' +
     '.m{max-width:88%;padding:10px 13px;border-radius:14px;font-size:14px;line-height:1.5;color:' + LAVENDER + ';word-wrap:break-word;overflow-wrap:anywhere}' +
     '.m.bot{background:#fff;border:1px solid ' + BORDER + ';border-bottom-left-radius:4px;align-self:flex-start}' +
     '.m.me{background:' + LAVENDER + ';color:#fff;border-bottom-right-radius:4px;align-self:flex-end}' +
-    '.m a{color:' + OCRE + ';font-weight:600;word-break:break-all}.m.me a{color:#fff}' +
+    '.m a{color:' + OCRE + ';font-weight:600;overflow-wrap:anywhere;text-decoration:underline;text-underline-offset:2px}.m.me a{color:#fff}' +
     '.m ul{margin:6px 0 6px 18px;padding:0}.m li{margin:2px 0}.m p{margin:0 0 6px}.m p:last-child{margin:0}' +
     '.chips{display:flex;flex-wrap:wrap;gap:8px;align-self:flex-start}' +
     '.chip{border:1px solid ' + OCRE + ';background:#fff;color:' + LAVENDER + ';border-radius:18px;padding:7px 12px;font-size:13px;cursor:pointer}.chip:hover{background:' + OCRE + ';color:#fff}' +
@@ -81,7 +82,7 @@
     '.fc{display:flex;flex-direction:column;gap:6px;min-width:250px}.fc label{font-size:12px;font-weight:600;display:flex;flex-direction:column;gap:2px}' +
     '.fc input{border:1px solid ' + BORDER + ';border-radius:8px;padding:6px 10px;font-size:14px;color:' + LAVENDER + ';font-weight:400;width:100%}' +
     '.fc input:focus-visible{outline:3px solid ' + OCRE + ';outline-offset:1px}.fc .btn{width:100%}' +
-    '.fc .hint{font-size:10.5px;color:' + MUTED + ';line-height:1.4;font-weight:400}.fc .err{font-size:12px;color:#b3261e;font-weight:600;min-height:0}' +
+    '.fc .hint{font-size:10.5px;color:' + MUTED + ';line-height:1.4;font-weight:400}.fc .err{font-size:12px;color:#B23A3A;font-weight:600;min-height:0}' +
     '.fc.sent{opacity:.55;pointer-events:none}' +
     '.btn{background:' + OCRE + ';color:#fff;border:0;border-radius:10px;padding:0 14px;height:38px;font-weight:600;cursor:pointer;font-size:14px}' +
     '.btn:disabled{opacity:.5;cursor:default}' +
@@ -91,7 +92,7 @@
     '</style>' +
     '<div class="wrap" id="wrap">' +
     '<section class="panel" id="panel" role="dialog" aria-label="Lagom Clinic assistant" aria-modal="false">' +
-    '<div class="head"><div class="t"><div class="n">The Lagom Clinic</div><div class="s">Virtual assistant · AI, not a clinician</div></div>' +
+    '<div class="head"><div class="t"><img class="logo" src="' + LOGO + '" alt="The Lagom Clinic" width="90" height="45"><div class="s">Virtual assistant · AI, not a clinician</div></div>' +
     '<button class="x" id="close" aria-label="Close chat">&times;</button></div>' +
     '<div class="log" id="log" role="log" aria-live="polite"></div>' +
     '<div class="note">Please don\'t share health details here. Emergency? Call 999. If you ask the team to contact you, we pass on only the name, email and phone you give us, plus a summary, to our clinic inbox (<a href="https://thelagom.co.uk/privacy-policy-2/" target="_blank" rel="noopener" style="color:inherit">privacy</a>). Or phone ' + PHONE + '.</div>' +
