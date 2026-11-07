@@ -206,7 +206,9 @@
       ask(lines.join("\n"));
     });
     // show the TOP of the card (the card can be taller than the visible chat on small screens)
+    log.style.scrollBehavior = "auto"; // instant, so an earlier smooth scroll-to-bottom cannot carry on past the card
     log.scrollTop += c.getBoundingClientRect().top - log.getBoundingClientRect().top - 8;
+    setTimeout(function () { log.style.scrollBehavior = ""; }, 400);
     setTimeout(function () { f.n.focus({ preventScroll: true }); }, 50);
   }
   function scroll() { log.scrollTop = log.scrollHeight; }
