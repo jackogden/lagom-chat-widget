@@ -64,7 +64,7 @@
     '.head{background:' + LAVENDER + ';color:#fff;padding:14px 16px;display:flex;align-items:center;gap:12px;border-bottom:3px solid ' + OCRE + '}' +
     '.head .t{flex:1;min-width:0}.head .logo{display:block;height:45px;width:auto}' +
     '.head .s{font-size:11.5px;opacity:.85;margin-top:4px}' +
-    '.x{background:transparent;border:0;color:#fff;cursor:pointer;font-size:24px;line-height:1;padding:4px 8px;border-radius:6px}.x:hover{background:rgba(255,255,255,.14)}' +
+    '.x{background:rgba(255,255,255,.16);border:0;color:#fff;cursor:pointer;font-size:28px;line-height:1;width:44px;height:44px;min-width:44px;padding:0;border-radius:50%;display:flex;align-items:center;justify-content:center}.x:hover{background:rgba(255,255,255,.3)}' +
     '.log{flex:1;overflow-y:auto;padding:14px;background:' + TITANIUM + ';display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}' +
     '.m{max-width:88%;padding:10px 13px;border-radius:14px;font-size:14px;line-height:1.5;color:' + LAVENDER + ';word-wrap:break-word;overflow-wrap:anywhere}' +
     '.m.bot{background:#fff;border:1px solid ' + BORDER + ';border-bottom-left-radius:4px;align-self:flex-start}' +
@@ -89,7 +89,7 @@
     '.fc.sent{opacity:.55;pointer-events:none}' +
     '.btn{background:' + OCRE + ';color:#fff;border:0;border-radius:10px;padding:0 14px;height:38px;font-weight:600;cursor:pointer;font-size:14px}' +
     '.btn:disabled{opacity:.5;cursor:default}' +
-    '@media(max-width:480px){.wrap{bottom:12px;right:12px}.wrap.left{left:12px}.panel{position:fixed;inset:0;width:100vw;max-width:none;height:100%;max-height:none;border-radius:0;border:0}' +
+    '@media(max-width:480px){.wrap{bottom:12px;right:12px}.wrap.left{left:12px}.panel{position:fixed;top:auto;left:10px;right:10px;bottom:10px;width:auto;max-width:none;height:min(540px,70vh);height:min(540px,70dvh);max-height:none;border-radius:14px}' +
     '.fab{width:56px;height:56px}}' +
     '@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}' +
     '</style>' +
