@@ -206,7 +206,7 @@
       ask(lines.join("\n"));
     });
     // show the TOP of the card (the card can be taller than the visible chat on small screens)
-    log.scrollTop = Math.max(0, c.offsetTop - 8);
+    log.scrollTop += c.getBoundingClientRect().top - log.getBoundingClientRect().top - 8;
     setTimeout(function () { f.n.focus({ preventScroll: true }); }, 50);
   }
   function scroll() { log.scrollTop = log.scrollHeight; }
