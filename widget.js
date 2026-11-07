@@ -92,7 +92,7 @@
     '</style>' +
     '<div class="wrap" id="wrap">' +
     '<section class="panel" id="panel" role="dialog" aria-label="Lagom Clinic assistant" aria-modal="false">' +
-    '<div class="head"><div class="t"><img class="logo" src="' + LOGO + '" alt="The Lagom Clinic" width="90" height="45"><div class="s">Virtual assistant · AI, not a clinician</div></div>' +
+    '<div class="head"><div class="t"><img class="logo" src="' + LOGO + '" alt="The Lagom Clinic" width="90" height="45"></div>' +
     '<button class="x" id="close" aria-label="Close chat">&times;</button></div>' +
     '<div class="log" id="log" role="log" aria-live="polite"></div>' +
     '<form class="form" id="form"><textarea id="q" rows="1" maxlength="' + MAX_LEN + '" placeholder="Ask about appointments, prices…" aria-label="Your message"></textarea>' +
