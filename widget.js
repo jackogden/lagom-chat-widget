@@ -78,10 +78,10 @@
     '.note{font-size:11px;color:' + MUTED + ';padding:7px 14px;background:#fff;border-top:1px solid ' + BORDER + ';line-height:1.4}' +
     '.form{display:flex;gap:8px;padding:10px 12px;background:#fff;border-top:1px solid ' + BORDER + ';align-items:flex-end}' +
     'textarea{flex:1;resize:none;border:1px solid ' + BORDER + ';border-radius:10px;padding:9px 11px;font-size:14px;line-height:1.4;max-height:96px;color:' + LAVENDER + '}' +
-    '.fc{display:flex;flex-direction:column;gap:8px;min-width:250px}.fc label{font-size:12px;font-weight:600;display:flex;flex-direction:column;gap:3px}' +
-    '.fc input{border:1px solid ' + BORDER + ';border-radius:8px;padding:8px 10px;font-size:14px;color:' + LAVENDER + ';font-weight:400;width:100%}' +
+    '.fc{display:flex;flex-direction:column;gap:6px;min-width:250px}.fc label{font-size:12px;font-weight:600;display:flex;flex-direction:column;gap:2px}' +
+    '.fc input{border:1px solid ' + BORDER + ';border-radius:8px;padding:6px 10px;font-size:14px;color:' + LAVENDER + ';font-weight:400;width:100%}' +
     '.fc input:focus-visible{outline:3px solid ' + OCRE + ';outline-offset:1px}.fc .btn{width:100%}' +
-    '.fc .hint{font-size:11px;color:' + MUTED + ';line-height:1.4;font-weight:400}.fc .err{font-size:12px;color:#b3261e;font-weight:600;min-height:0}' +
+    '.fc .hint{font-size:10.5px;color:' + MUTED + ';line-height:1.4;font-weight:400}.fc .err{font-size:12px;color:#b3261e;font-weight:600;min-height:0}' +
     '.fc.sent{opacity:.55;pointer-events:none}' +
     '.btn{background:' + OCRE + ';color:#fff;border:0;border-radius:10px;padding:0 14px;height:38px;font-weight:600;cursor:pointer;font-size:14px}' +
     '.btn:disabled{opacity:.5;cursor:default}' +
@@ -118,8 +118,12 @@
     s = s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, function (m, t, u) {
       return keep('<a href="' + u + '" target="_blank" rel="noopener noreferrer">' + t + "</a>");
     });
-    s = s.replace(/(https?:\/\/[^\s<)]+[^\s<).,;:!?])/g, function (u) {
-      return keep('<a href="' + u + '" target="_blank" rel="noopener noreferrer">' + shorten(u) + "</a>");
+    s = s.replace(/(https?:\/\/[^\s<)]+[^\s<).,;:!?])/g, function (u, m1, off, whole) {
+      var label = shorten(u);
+      // if the sentence already says the same thing just before the link, don't repeat it
+      var before = whole.slice(0, off).replace(/<[^>]*>|\u0001\d+\u0001/g, "").replace(/[*:\s]+$/, "").toLowerCase();
+      if (before.slice(-label.length) === label.toLowerCase()) label = "Open link";
+      return keep('<a href="' + u + '" target="_blank" rel="noopener noreferrer">' + label + "</a>");
     });
     s = s.replace(/\b(0117 ?987 ?2075)\b/g, '<a href="tel:01179872075">$1</a>');
     s = s.replace(/\b([a-z0-9._-]+@thelagom\.co\.uk)\b/gi, '<a href="mailto:$1">$1</a>');
@@ -201,8 +205,9 @@
       c.remove();
       ask(lines.join("\n"));
     });
-    setTimeout(function () { f.n.focus(); }, 50);
-    scroll();
+    // show the TOP of the card (the card can be taller than the visible chat on small screens)
+    log.scrollTop = Math.max(0, c.offsetTop - 8);
+    setTimeout(function () { f.n.focus({ preventScroll: true }); }, 50);
   }
   function scroll() { log.scrollTop = log.scrollHeight; }
 
