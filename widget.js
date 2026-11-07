@@ -10,7 +10,8 @@
   var ENDPOINT = ATTR("endpoint", "https://euguiuqdjtpwdztifrlc.supabase.co/functions/v1/chat");
   var POSITION = ATTR("position", "auto");
   var PHONE = "0117 987 2075";
-  var LOGO = ATTR("logo", (script && script.src ? script.src.replace(/[^\/]*$/, "") : "https://jackogden.github.io/lagom-chat-widget/") + "logo-reversed.png");
+  var BASE = (script && script.src ? script.src.replace(/[^\/]*$/, "") : "https://jackogden.github.io/lagom-chat-widget/");
+  var LOGO = ATTR("logo", BASE + "lagom-icon.webp"), LOGO_STILL = ATTR("logo-still", BASE + "lagom-icon-static.png");
   var STORE = "lagomChat.v1";
   var MAX_LEN = 600;
 
@@ -62,9 +63,9 @@
     'box-shadow:0 14px 44px rgba(0,0,0,.28);overflow:hidden;flex-direction:column;border:1px solid ' + BORDER + '}' +
     '.panel.open{display:flex}' +
     '.head{background:' + LAVENDER + ';color:#fff;padding:14px 16px;display:flex;align-items:center;gap:12px;border-bottom:3px solid ' + OCRE + '}' +
-    '.head .t{flex:1;min-width:0}.head .logo{display:block;height:45px;width:auto}' +
+    '.head .t{flex:1;min-width:0}.head .logo{display:block;height:48px;width:48px}' +
     '.head .s{font-size:11.5px;opacity:.85;margin-top:4px}' +
-    '.x{background:rgba(255,255,255,.16);border:0;color:#fff;cursor:pointer;font-size:28px;line-height:1;width:44px;height:44px;min-width:44px;padding:0;border-radius:50%;display:flex;align-items:center;justify-content:center}.x:hover{background:rgba(255,255,255,.3)}' +
+    '.x{background:transparent;border:0;color:#fff;cursor:pointer;font-size:28px;line-height:1;width:44px;height:44px;min-width:44px;padding:0;border-radius:50%;display:flex;align-items:center;justify-content:center}.x:hover{background:rgba(255,255,255,.14)}' +
     '.log{flex:1;overflow-y:auto;overflow-x:hidden;padding:14px;background:' + TITANIUM + ';display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}' +
     '.m{max-width:88%;padding:10px 13px;border-radius:14px;font-size:14px;line-height:1.5;color:' + LAVENDER + ';word-wrap:break-word;overflow-wrap:anywhere}' +
     '.m.bot{background:#fff;border:1px solid ' + BORDER + ';border-bottom-left-radius:4px;align-self:flex-start}' +
@@ -96,7 +97,7 @@
     '</style>' +
     '<div class="wrap" id="wrap">' +
     '<section class="panel" id="panel" role="dialog" aria-label="Lagom Clinic assistant" aria-modal="false">' +
-    '<div class="head"><div class="t"><img class="logo" src="' + LOGO + '" alt="The Lagom Clinic" width="90" height="45"></div>' +
+    '<div class="head"><div class="t"><picture><source media="(prefers-reduced-motion:reduce)" srcset="' + LOGO_STILL + '"><img class="logo" src="' + LOGO + '" alt="The Lagom Clinic" width="48" height="48"></picture></div>' +
     '<button class="x" id="close" aria-label="Close chat">&times;</button></div>' +
     '<div class="log" id="log" role="log" aria-live="polite"></div>' +
     '<form class="form" id="form"><textarea id="q" rows="1" maxlength="' + MAX_LEN + '" placeholder="Ask about appointments, prices…" aria-label="Your message"></textarea>' +
