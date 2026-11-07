@@ -107,16 +107,31 @@
   function inline(s) {
     s = esc(s);
     s = s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+    var stash = [];
+    function keep(html) { stash.push(html); return "\u0001" + (stash.length - 1) + "\u0001"; }
+    // [label](https://...) written by the model: keep the label, link the URL
+    s = s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, function (m, t, u) {
+      return keep('<a href="' + u + '" target="_blank" rel="noopener noreferrer">' + t + "</a>");
+    });
     s = s.replace(/(https?:\/\/[^\s<)]+[^\s<).,;:!?])/g, function (u) {
-      return '<a href="' + u + '" target="_blank" rel="noopener noreferrer">' + shorten(u) + "</a>";
+      return keep('<a href="' + u + '" target="_blank" rel="noopener noreferrer">' + shorten(u) + "</a>");
     });
     s = s.replace(/\b(0117 ?987 ?2075)\b/g, '<a href="tel:01179872075">$1</a>');
     s = s.replace(/\b([a-z0-9._-]+@thelagom\.co\.uk)\b/gi, '<a href="mailto:$1">$1</a>');
-    return s;
+    return s.replace(/\u0001(\d+)\u0001/g, function (m, i) { return stash[+i]; });
   }
+  // Friendly link text instead of the raw URL
+  var BOOK_LABELS = {
+    "gp": "Book a GP appointment", "womens-health": "Book a women\u2019s health appointment",
+    "screening": "Book a blood test or health screen", "weight-management": "Book a weight management appointment",
+    "trt": "Book a TRT appointment", "minor-surgery": "Book a minor surgery appointment",
+    "psychiatry": "Complete the enquiry form"
+  };
   function shorten(u) {
+    var bm = u.match(/^https?:\/\/(?:www\.)?thelagom\.co\.uk\/book\/?(?:\?service=([a-z-]+))?\/?$/);
+    if (bm) return (bm[1] && BOOK_LABELS[bm[1]]) || "Book online";
     if (/online-booking\.semble\.io/.test(u)) return "Open the booking page";
-    if (/thelagom\.co\.uk\/book\/?$/.test(u)) return "thelagom.co.uk/book";
+    if (/thelagom\.co\.uk\/privacy/.test(u)) return "Privacy policy";
     return u.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "");
   }
   // render(): every character of the message is HTML-escaped by esc() BEFORE any markup is added, and only
