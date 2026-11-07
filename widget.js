@@ -95,7 +95,6 @@
     '<div class="head"><div class="t"><img class="logo" src="' + LOGO + '" alt="The Lagom Clinic" width="90" height="45"><div class="s">Virtual assistant · AI, not a clinician</div></div>' +
     '<button class="x" id="close" aria-label="Close chat">&times;</button></div>' +
     '<div class="log" id="log" role="log" aria-live="polite"></div>' +
-    '<div class="note">Please don\'t share health details here. Emergency? Call 999. If you ask the team to contact you, we pass on only the name, email and phone you give us, plus a summary, to our clinic inbox (<a href="https://thelagom.co.uk/privacy-policy-2/" target="_blank" rel="noopener" style="color:inherit">privacy</a>). Or phone ' + PHONE + '.</div>' +
     '<form class="form" id="form"><textarea id="q" rows="1" maxlength="' + MAX_LEN + '" placeholder="Ask about appointments, prices…" aria-label="Your message"></textarea>' +
     '<button class="btn" id="send" type="submit">Send</button></form>' +
     '</section>' +
