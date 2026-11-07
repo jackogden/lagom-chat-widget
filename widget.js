@@ -78,6 +78,11 @@
     '.note{font-size:11px;color:' + MUTED + ';padding:7px 14px;background:#fff;border-top:1px solid ' + BORDER + ';line-height:1.4}' +
     '.form{display:flex;gap:8px;padding:10px 12px;background:#fff;border-top:1px solid ' + BORDER + ';align-items:flex-end}' +
     'textarea{flex:1;resize:none;border:1px solid ' + BORDER + ';border-radius:10px;padding:9px 11px;font-size:14px;line-height:1.4;max-height:96px;color:' + LAVENDER + '}' +
+    '.fc{display:flex;flex-direction:column;gap:8px;min-width:250px}.fc label{font-size:12px;font-weight:600;display:flex;flex-direction:column;gap:3px}' +
+    '.fc input{border:1px solid ' + BORDER + ';border-radius:8px;padding:8px 10px;font-size:14px;color:' + LAVENDER + ';font-weight:400;width:100%}' +
+    '.fc input:focus-visible{outline:3px solid ' + OCRE + ';outline-offset:1px}.fc .btn{width:100%}' +
+    '.fc .hint{font-size:11px;color:' + MUTED + ';line-height:1.4;font-weight:400}.fc .err{font-size:12px;color:#b3261e;font-weight:600;min-height:0}' +
+    '.fc.sent{opacity:.55;pointer-events:none}' +
     '.btn{background:' + OCRE + ';color:#fff;border:0;border-radius:10px;padding:0 14px;height:38px;font-weight:600;cursor:pointer;font-size:14px}' +
     '.btn:disabled{opacity:.5;cursor:default}' +
     '@media(max-width:480px){.wrap{bottom:12px;right:12px}.wrap.left{left:12px}.panel{position:fixed;inset:0;width:100vw;max-width:none;height:100%;max-height:none;border-radius:0;border:0}' +
@@ -151,20 +156,60 @@
     flush();
     return out.join("");
   }
-  function add(role, text) {
+  var FORM_TAG = /\n?\[\[FORM\]\]\s*/g, FORM_SENT = "[Contact form submitted]";
+  function add(role, text, live) {
     var d = document.createElement("div");
     d.className = "m " + (role === "user" ? "me" : "bot");
-    d.innerHTML = render(text);
+    var shown = String(text), wantsForm = false;
+    if (role !== "user" && FORM_TAG.test(shown)) { wantsForm = true; shown = shown.replace(FORM_TAG, "").trim(); }
+    FORM_TAG.lastIndex = 0;
+    if (role === "user" && shown.indexOf(FORM_SENT) === 0) shown = "**My contact details**" + shown.slice(FORM_SENT.length);
+    d.innerHTML = render(shown);
     log.appendChild(d);
+    if (wantsForm && live) contactForm();
     scroll();
     return d;
+  }
+  // Contact form: any box may be left blank, but the team needs a phone number or an email to reply.
+  function contactForm() {
+    var old = log.querySelector(".formcard"); if (old) old.remove();
+    var c = document.createElement("div");
+    c.className = "m bot formcard";
+    c.innerHTML =
+      '<form class="fc" novalidate>' +
+      '<label>Name<input name="n" type="text" autocomplete="name" maxlength="80"></label>' +
+      '<label>Telephone number<input name="p" type="tel" autocomplete="tel" maxlength="30" inputmode="tel"></label>' +
+      '<label>Email address<input name="e" type="email" autocomplete="email" maxlength="120" inputmode="email"></label>' +
+      '<div class="hint">Share whichever you are happy with. We need at least a phone number or an email address so the team can reply.</div>' +
+      '<div class="err" role="alert"></div>' +
+      '<button class="btn" type="submit">Send to the clinic team</button>' +
+      '<div class="hint">By pressing Send you agree to us passing these details, with a short summary of your question, to the clinic team at info@thelagom.co.uk. Please don\'t include health details.</div>' +
+      '</form>';
+    log.appendChild(c);
+    var f = c.querySelector("form"), err = c.querySelector(".err");
+    f.addEventListener("submit", function (ev) {
+      ev.preventDefault();
+      var n = f.n.value.trim(), p = f.p.value.trim(), e = f.e.value.trim();
+      if (!p && !e) { err.textContent = "Please add a phone number or an email address."; return; }
+      if (e && !/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]{2,}$/.test(e)) { err.textContent = "That email address doesn\u2019t look right."; return; }
+      if (p && p.replace(/\D/g, "").length < 10) { err.textContent = "Please include the full phone number with area code."; return; }
+      err.textContent = "";
+      var lines = [FORM_SENT];
+      if (n) lines.push("Name: " + n);
+      if (p) lines.push("Telephone: " + p);
+      if (e) lines.push("Email: " + e);
+      c.remove();
+      ask(lines.join("\n"));
+    });
+    setTimeout(function () { f.n.focus(); }, 50);
+    scroll();
   }
   function scroll() { log.scrollTop = log.scrollHeight; }
 
   function drawAll() {
     log.innerHTML = "";
     add("assistant", GREETING);
-    state.msgs.forEach(function (m) { add(m.role, m.content); });
+    state.msgs.forEach(function (m, i) { add(m.role, m.content, i === state.msgs.length - 1 && m.role === "assistant"); });
     if (!state.msgs.length) chips();
   }
   function chips() {
@@ -184,6 +229,7 @@
     text = (text || "").trim().slice(0, MAX_LEN);
     if (!text || busy) return;
     var c = $("chips"); if (c) c.remove();
+    var fc = log.querySelector(".formcard"); if (fc) fc.remove();
     state.msgs.push({ role: "user", content: text });
     add("user", text);
     save();
@@ -208,9 +254,9 @@
     typing.remove();
     var text = reply || "Sorry, I couldn't connect just now. Please phone the clinic on " + PHONE + " or email info@thelagom.co.uk.";
     state.msgs.push({ role: "assistant", content: text });
-    add("assistant", text);
+    add("assistant", text, true);
     save(); setBusy(false);
-    q.focus();
+    if (!log.querySelector(".formcard")) q.focus();
   }
   function setBusy(b) { busy = b; send.disabled = b; }
 
