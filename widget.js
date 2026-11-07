@@ -1,5 +1,5 @@
 /*! Lagom Clinic chat widget. Embed: <script src=".../widget.js" defer></script>
- *  Optional attributes on the script tag: data-endpoint, data-position="left|right", data-open="1"
+ *  Optional attributes on the script tag: data-endpoint, data-position="left|right", data-open="1", data-autoopen="0" (switch off the 3-second hello)
  *  Self-contained (shadow DOM): it cannot restyle, or be restyled by, the host page. */
 (function () {
   if (window.__lagomChat) return;
@@ -16,7 +16,7 @@
 
   var LAVENDER = "#363662", OCRE = "#C9762A", TITANIUM = "#E6E4E3", MUTED = "#68677E", BORDER = "#DEDCE0";
 
-  var GREETING = "Hello, I'm the Lagom Clinic's virtual assistant. I can help with appointments, prices and when we have availability. " +
+  var GREETING = "Hi, how can I help? I'm the Lagom Clinic's virtual assistant and can help with appointments, prices and when we have availability. " +
     "I'm an AI, so I can't give medical advice. In an emergency call 999.";
   var CHIPS = [
     "When is your next available appointment?",
@@ -337,8 +337,9 @@
     fab.style.display = (o && window.matchMedia("(max-width:480px)").matches) ? "none" : "flex";
     if (o) { dot.style.display = "none"; if (!log.childNodes.length) drawAll(); scroll(); setTimeout(function () { q.focus(); }, 50); }
   }
-  fab.addEventListener("click", function () { setOpen(!state.open); });
-  $("close").addEventListener("click", function () { setOpen(false); fab.focus(); });
+  var touched = false;
+  fab.addEventListener("click", function () { touched = true; setOpen(!state.open); });
+  $("close").addEventListener("click", function () { touched = true; setOpen(false); fab.focus(); });
   root.addEventListener("keydown", function (e) { if (e.key === "Escape" && state.open) { setOpen(false); fab.focus(); } });
   form.addEventListener("submit", function (e) { e.preventDefault(); ask(q.value); });
   q.addEventListener("keydown", function (e) { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); ask(q.value); } });
@@ -356,6 +357,15 @@
     document.body.appendChild(host);
     place(); setTimeout(place, 2500);
     if (state.open || ATTR("open", "") === "1") setOpen(true);
+    // Say hello on its own after 3 s: once per browser session, never if the visitor has already opened/closed the chat.
+    try {
+      if (ATTR("autoopen", "1") !== "0" && !state.open && !state.msgs.length && !sessionStorage.getItem(STORE + "-greeted")) {
+        setTimeout(function () {
+          try { sessionStorage.setItem(STORE + "-greeted", "1"); } catch (e) {}
+          if (!state.open && !touched) setOpen(true);
+        }, 3000);
+      }
+    } catch (e) {}
   }
   if (document.body) mount(); else document.addEventListener("DOMContentLoaded", mount);
 })();
