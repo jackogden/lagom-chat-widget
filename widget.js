@@ -35,13 +35,11 @@
   function save() { try { sessionStorage.setItem(STORE, JSON.stringify(state)); } catch (e) {} }
   function rand() { return Math.random().toString(36).slice(2) + Date.now().toString(36); }
 
-  // ---- fonts (document-level so the shadow tree can use them) -------------------
-  if (!document.querySelector('link[data-lagom-chat-font]')) {
-    var l = document.createElement("link");
-    l.rel = "stylesheet"; l.setAttribute("data-lagom-chat-font", "1");
-    l.href = "https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700&family=Raleway:wght@300;400;500;600;700&display=swap";
-    document.head.appendChild(l);
-  }
+  // ---- fonts ------------------------------------------------------------------
+  // Deliberately NOT loading any web fonts into the host page. An earlier version injected a Google Fonts
+  // stylesheet (Nanum Myeongjo + Raleway); thelagom.co.uk already defines those families itself, and the
+  // duplicate @font-face rules changed the site's own heading metrics (overlapping text). The panel uses the
+  // site's Raleway when present and falls back to the system sans-serif elsewhere.
 
   // ---- DOM ----------------------------------------------------------------------
   var host = document.createElement("div");
