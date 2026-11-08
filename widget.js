@@ -102,6 +102,7 @@
     '<div class="log" id="log" role="log" aria-live="polite"></div>' +
     '<form class="form" id="form"><textarea id="q" rows="1" maxlength="' + MAX_LEN + '" placeholder="Ask about appointments, prices…" aria-label="Your message"></textarea>' +
     '<button class="btn" id="send" type="submit">Send</button></form>' +
+    '<div class=\"note\">Please don\u2019t share health details here. Chats are kept for 90 days to improve this service (contact details are removed). <a href=\"https://thelagom.co.uk/privacy-policy-2/\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"color:inherit\">Privacy</a></div>' +
     '</section>' +
     '<button class="fab" id="fab" aria-label="Open chat with The Lagom Clinic assistant" aria-expanded="false">' +
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.4A8 8 0 1 1 21 12z"/></svg>' +
