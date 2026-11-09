@@ -56,7 +56,7 @@
     '.fab{width:60px;height:60px;border-radius:50%;border:0;cursor:pointer;background:' + LAVENDER + ';color:#fff;display:flex;align-items:center;justify-content:center;' +
     'box-shadow:0 6px 18px rgba(54,54,98,.35);transition:transform .15s ease;position:relative}' +
     '.fab:hover{transform:scale(1.06)}.fab:focus-visible,.btn:focus-visible,.chip:focus-visible,textarea:focus-visible{outline:3px solid ' + OCRE + ';outline-offset:2px}' +
-    '.fab svg{width:28px;height:28px}.fab .dot{position:absolute;top:2px;right:2px;width:14px;height:14px;border-radius:50%;background:' + OCRE + ';border:2px solid #fff}' +
+    '.fab .ficon{display:block;width:40px;height:40px;pointer-events:none}.fab .dot{position:absolute;top:2px;right:2px;width:14px;height:14px;border-radius:50%;background:' + OCRE + ';border:2px solid #fff}' +
     '.panel{display:none;width:380px;max-width:calc(100vw - 24px);height:600px;max-height:calc(100vh - 110px);background:#fff;border-radius:14px 14px 14px 14px;' +
     'box-shadow:0 14px 44px rgba(0,0,0,.28);overflow:hidden;flex-direction:column;border:1px solid ' + BORDER + '}' +
     '.panel.open{display:flex}' +
@@ -90,7 +90,7 @@
     '.btn:disabled{opacity:.5;cursor:default}' +
     '@media(max-width:480px),(pointer:coarse){textarea,.fc input,.fc input[type=date]{font-size:16px}}' + // iOS Safari zooms the whole page when a field under 16px is focused: that pushed the chat off the right edge
     '@media(max-width:480px){.wrap{bottom:12px;right:12px}.wrap.left{left:12px}.panel{position:fixed;top:auto;left:10px;right:10px;bottom:10px;width:auto;max-width:none;height:min(540px,70vh);height:min(540px,70dvh);max-height:none;border-radius:14px}' +
-    '.fab{width:56px;height:56px}}' +
+    '.fab{width:56px;height:56px}.fab .ficon{width:36px;height:36px}}' +
     '@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}' +
     '</style>' +
     '<div class="wrap" id="wrap">' +
@@ -103,7 +103,7 @@
     '<div class=\"note\">Please don\u2019t share health details here. Chats are kept for 90 days to improve this service (contact details are removed). <a href=\"https://thelagom.co.uk/privacy-policy-2/\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"color:inherit\">Privacy</a></div>' +
     '</section>' +
     '<button class="fab" id="fab" aria-label="Open chat with The Lagom Clinic assistant" aria-expanded="false">' +
-    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.4A8 8 0 1 1 21 12z"/></svg>' +
+    '<picture><source media="(prefers-reduced-motion:reduce)" srcset="' + LOGO_STILL + '"><img class="ficon" src="' + LOGO + '" alt="" width="40" height="40"></picture>' +
     '<span class="dot" id="dot"></span></button>' +
     '</div>';
 
