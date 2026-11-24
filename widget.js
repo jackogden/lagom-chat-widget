@@ -1,5 +1,5 @@
 /*! Lagom Clinic chat widget. Embed: <script src=".../widget.js" defer></script>
- *  Optional attributes on the script tag: data-endpoint, data-position="left|right", data-open="1", data-autoopen="0" (switch off the 3-second hello)
+ *  Optional attributes on the script tag: data-endpoint, data-position="left|right", data-open="1", data-autoopen="0" (switch off the 30-second hello)
  *  Self-contained (shadow DOM): it cannot restyle, or be restyled by, the host page. */
 (function () {
   if (window.__lagomChat) return;
@@ -358,13 +358,13 @@
     document.body.appendChild(host);
     place(); setTimeout(place, 2500);
     if (state.open || ATTR("open", "") === "1") setOpen(true);
-    // Say hello on its own after 3 s: once per browser session, never if the visitor has already opened/closed the chat.
+    // Say hello on its own after 30 s: once per browser session, never if the visitor has already opened/closed the chat.
     try {
       if (ATTR("autoopen", "1") !== "0" && !state.open && !state.msgs.length && !sessionStorage.getItem(STORE + "-greeted")) {
         setTimeout(function () {
           try { sessionStorage.setItem(STORE + "-greeted", "1"); } catch (e) {}
           if (!state.open && !touched) setOpen(true);
-        }, 3000);
+        }, 30000);
       }
     } catch (e) {}
   }
